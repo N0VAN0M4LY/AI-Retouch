@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Retouch</title>
+  </head>
+  <body>
+    <div id="root">AI Retouch bootstrap placeholder</div>
+    <script>
+      /* UXP polyfill: TextEncoder/TextDecoder required by fast-png */
+      if (typeof TextEncoder === 'undefined') {
+        globalThis.TextEncoder = function TextEncoder() { this.encoding = 'utf-8'; };
+        globalThis.TextEncoder.prototype.encode = function(s) {
+          var buf = new Uint8Array(s.length * 3), p = 0;
+          for (var i = 0; i < s.length; i++) {
+            var c = s.charCodeAt(i);
+            if (c < 128) { buf[p++] = c; }
+            else if (c < 2048) { buf[p++] = 192 | (c >> 6); buf[p++] = 128 | (c & 63); }
+            else if (c >= 55296 && c <= 56319) {
+              c = 65536 + ((c - 55296) << 10) + (s.charCodeAt(++i) - 56320);
+              buf[p++] = 240 | (c >> 18); buf[p++] = 128 | ((c >> 12) & 63);
+              buf[p++] = 128 | ((c >> 6) & 63); buf[p++] = 128 | (c & 63);
+            } else { buf[p++] = 224 | (c >> 12); buf[p++] = 128 | ((c >> 6) & 63); buf[p++] = 128 | (c & 63); }
+          }
+          return buf.slice(0, p);
+        };
+        globalThis.TextEncoder.prototype.encodeInto = function(s, d) {
+          var e = this.encode(s), n = Math.min(e.length, d.length); d.set(e.subarray(0, n));
+          return { read: s.length, written: n };
+        };
+      }
+      if (typeof TextDecoder === 'undefined') {
+        globalThis.TextDecoder = function TextDecoder() { this.encoding = 'utf-8'; };
+        globalThis.TextDecoder.prototype.decode = function(buf) {
+          if (!buf) return '';
+          var b = buf instanceof Uint8Array ? buf : new Uint8Array(buf), s = '', i = 0;
+          while (i < b.length) {
+            var x = b[i], cp;
+            if (x < 128) { cp = x; i++; }
+            else if ((x & 224) === 192) { cp = ((x & 31) << 6) | (b[i+1] & 63); i += 2; }
+            else if ((x & 240) === 224) { cp = ((x & 15) << 12) | ((b[i+1] & 63) << 6) | (b[i+2] & 63); i += 3; }
+            else { cp = ((x & 7) << 18) | ((b[i+1] & 63) << 12) | ((b[i+2] & 63) << 6) | (b[i+3] & 63); i += 4; }
+            if (cp < 65536) s += String.fromCharCode(cp);
+            else { cp -= 65536; s += String.fromCharCode(55296 + (cp >> 10), 56320 + (cp & 1023)); }
+          }
+          return s;
+        };
+      }
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

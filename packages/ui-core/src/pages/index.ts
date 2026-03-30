@@ -1,0 +1,10 @@
+// Shared pages — populated in Phase 5
+export { default as ChatTab } from './ChatTab';
+export { default as ComfyUITab } from './ComfyUITab';
+export { default as LibraryTab } from './LibraryTab';
+export { default as ImageTransferSection } from './ImageTransferSection';
+export { default as ConnectionSection } from './settings/ConnectionSection';
+export { default as ImageQualitySection } from './settings/ImageQualitySection';
+export { default as ProviderSection } from './settings/ProviderSection';
+export { default as ProviderEdit } from './settings/ProviderEdit';
+export { default as SettingsMain } from './settings/SettingsMain';

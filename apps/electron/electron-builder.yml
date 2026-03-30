@@ -1,0 +1,69 @@
+appId: com.airetouch.app
+productName: AI Retouch
+copyright: Copyright (c) 2025
+
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - out/**/*
+  - package.json
+
+extraResources:
+  - from: resources/server/dist
+    to: server/dist
+    filter:
+      - "**/*"
+  - from: resources/server/node_modules
+    to: server/node_modules
+    filter:
+      - "**/*"
+  - from: resources/server/package.json
+    to: server/package.json
+  - from: ../../apps/plugin/release/ai-retouch-plugin.ccx
+    to: plugin/ai-retouch-plugin.ccx
+
+asar: true
+npmRebuild: false
+afterPack: ./scripts/afterPack.cjs
+
+win:
+  icon: resources/icon.ico
+  signAndEditExecutable: false
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: zip
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  include: resources/installer.nsh
+  artifactName: "AI-Retouch-${version}-Setup.${ext}"
+  installerIcon: resources/icon.ico
+  uninstallerIcon: resources/icon.ico
+
+mac:
+  icon: resources/icon.icns
+  category: public.app-category.graphics-design
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: resources/entitlements.mac.plist
+  entitlementsInherit: resources/entitlements.mac.plist
+  target:
+    - target: pkg
+      arch:
+        - x64
+        - arm64
+
+pkg:
+  installLocation: /Applications
+  artifactName: "AI-Retouch-${version}-Setup-${arch}.${ext}"
+
+publish: null

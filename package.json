@@ -1,0 +1,32 @@
+{
+  "name": "ai-retouch-with-ai",
+  "private": true,
+  "version": "0.0.1",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "pnpm -r build",
+    "build:plugin": "pnpm --filter @ai-retouch/plugin build",
+    "build:server": "pnpm --filter @ai-retouch/server build",
+    "build:server:pack": "pnpm --filter @ai-retouch/server build:pack",
+    "build:shared": "pnpm --filter @ai-retouch/shared build",
+    "dev:server": "pnpm --filter @ai-retouch/server dev",
+    "dev:electron": "pnpm --filter @ai-retouch/electron dev",
+    "build:electron": "pnpm --filter @ai-retouch/electron build",
+    "prepare-server": "node scripts/prepare-server.js",
+    "build:ccx": "node scripts/build-ccx.js",
+    "pack:win": "pnpm build:shared && pnpm build:server:pack && pnpm prepare-server && pnpm build:plugin && pnpm build:ccx && pnpm build:electron && cd apps/electron && npx electron-builder --win",
+    "pack:win:dir": "pnpm build:shared && pnpm build:server:pack && pnpm prepare-server && pnpm build:plugin && pnpm build:ccx && pnpm build:electron && cd apps/electron && npx electron-builder --win --dir",
+    "pack:mac": "pnpm build:shared && pnpm build:server:pack && pnpm prepare-server && pnpm build:plugin && pnpm build:ccx && pnpm build:electron && cd apps/electron && CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder --mac",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "devDependencies": {
+    "archiver": "^7.0.1",
+    "typescript": "^5.7.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^19.0.0",
+      "@types/react-dom": "^19.0.0"
+    }
+  }
+}

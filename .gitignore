@@ -1,0 +1,104 @@
+# ===============================================
+# AI Retouch for PS — .gitignore
+# pnpm monorepo: apps/{electron,plugin,server} + packages/{shared,ui-core}
+# ===============================================
+
+# -----------------------------------------------
+# Dependencies
+# -----------------------------------------------
+node_modules/
+.pnpm-store/
+
+# -----------------------------------------------
+# Build outputs (all packages/apps)
+# -----------------------------------------------
+dist/
+dist-pack/
+
+# Electron build output (electron-vite)
+apps/electron/out/
+
+# -----------------------------------------------
+# Release / packaging artifacts
+# -----------------------------------------------
+# Electron installer builds (.exe, .zip, .dmg, .pkg, win-unpacked/, mac/, etc.)
+apps/electron/release/
+
+# UXP plugin packaged bundles (.ccx)
+apps/plugin/release/
+
+# -----------------------------------------------
+# Runtime data & caches
+# -----------------------------------------------
+# Root-level runtime data
+data/
+
+# Server runtime data (SQLite DB, cache, temp files)
+apps/server/data/
+
+# -----------------------------------------------
+# Environment & secrets
+# -----------------------------------------------
+.env
+.env.*
+!.env.example
+
+# -----------------------------------------------
+# IDE / Editor configs (universal baseline)
+# -----------------------------------------------
+*.swp
+*.swo
+*~
+
+# -----------------------------------------------
+# OS generated files
+# -----------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# -----------------------------------------------
+# Logs & debug
+# -----------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Electron-builder debug logs
+builder-debug.yml
+builder-effective-config.yaml
+
+# -----------------------------------------------
+# Test & coverage
+# -----------------------------------------------
+coverage/
+.nyc_output/
+
+# -----------------------------------------------
+# TypeScript incremental / cache
+# -----------------------------------------------
+*.tsbuildinfo
+
+# -----------------------------------------------
+# Misc
+# -----------------------------------------------
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Archives created during build
+*.zip
+*.tar.gz
+
+# Lock files other than pnpm (we use pnpm)
+package-lock.json
+yarn.lock
+
+# macOS pack scripts may leave artifacts
+*.bak

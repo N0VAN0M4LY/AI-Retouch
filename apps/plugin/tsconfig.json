@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": false,
+    "types": ["vite/client"],
+    "paths": {
+      "@ai-retouch/shared": ["../../packages/shared/src/index.ts"],
+      "@ai-retouch/ui-core": ["../../packages/ui-core/src/index.ts"],
+      "@ai-retouch/ui-core/*": ["../../packages/ui-core/src/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}
+

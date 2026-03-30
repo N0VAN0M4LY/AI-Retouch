@@ -1,0 +1,87 @@
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: #0d0d0f;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+}
+
+body {
+  font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.4;
+}
+
+button {
+  font: inherit;
+  background: transparent;
+  color: inherit;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  outline: none;
+  margin: 0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: var(--uxp-host-background-color, rgba(255, 255, 255, 0.07));
+  color: var(--uxp-host-text-color, rgba(255, 255, 255, 0.92));
+  border: 1px solid var(--uxp-host-border-color, rgba(255, 255, 255, 0.14));
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--uxp-host-widget-hover-border-color, rgba(108, 138, 255, 0.5));
+  outline: none;
+}
+
+input[type="range"] {
+  padding: 0;
+  border: none;
+  background: transparent;
+  height: 20px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* CSS @keyframes / transition / transform are NOT supported in UXP.
+   Animations are handled via JS setInterval + React state.
+   See hooks/useAnimations.ts */
