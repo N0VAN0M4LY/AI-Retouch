@@ -523,6 +523,7 @@ export default function DirectChat({ providersVersion, documentPath, onActiveSes
       fetchRecentResults();
     }
   });
+  useDataRefresh('all', fetchProviders);
 
   const orderedSessions = (() => {
     if (sessionOrder.length === 0) return sessions;

@@ -104,6 +104,7 @@ export interface UseComfyUIWorkflowReturn {
   connected: boolean;
   wsConnected: boolean;
   handleTestConnection: () => Promise<void>;
+  testingConnection: boolean;
 
   // Workflow list
   remoteFiles: RemoteWorkflowEntry[];
@@ -203,6 +204,7 @@ export function useComfyUIWorkflow({
   // Connection
   const [status, setStatus] = useState<{ state: string; address?: string } | null>(null);
   const connected = status?.state === 'connected';
+  const [testingConnection, setTestingConnection] = useState(false);
 
   // Workflow list
   const [remoteFiles, setRemoteFiles] = useState<RemoteWorkflowEntry[]>([]);
@@ -262,6 +264,7 @@ export function useComfyUIWorkflow({
   });
   const { wsConnected, progressInfo, executingNode, queueRemaining, waitForResult, clearProgress } =
     useComfyUIEvents(platform.events);
+  const prevWsConnectedRef = useRef<boolean>(wsConnected);
   const [currentPromptId, setCurrentPromptId] = useState<string | null>(null);
   const paramSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const snapshotRef = useRef<CanvasSnapshot | null>(null);
@@ -275,9 +278,14 @@ export function useComfyUIWorkflow({
   }, []);
 
   useEffect(() => {
+    const wasWsConnected = prevWsConnectedRef.current;
+    prevWsConnectedRef.current = wsConnected;
+
     if (wsConnected && !connected) {
+      // WS 已连接但 HTTP 状态未同步 → 重新拉取确认
       getComfyUIStatus().then((s) => setStatus(s)).catch(() => {});
-    } else if (!wsConnected && connected) {
+    } else if (!wsConnected && wasWsConnected && connected) {
+      // WS 由已连接变为断开（真实断线）→ 标记为断开
       setStatus((prev) => prev ? { ...prev, state: 'disconnected' } : prev);
     }
   }, [wsConnected, connected]);
@@ -829,10 +837,14 @@ export function useComfyUIWorkflow({
   }
 
   async function handleTestConnection() {
+    if (testingConnection) return;
+    setTestingConnection(true);
     try {
       const s = await testComfyUIConnection();
       setStatus(s);
-    } catch { /* ignore */ }
+    } catch { /* ignore */ } finally {
+      setTestingConnection(false);
+    }
   }
 
   async function handleApplyToCanvas(output: CuiOutput) {
@@ -944,7 +956,7 @@ export function useComfyUIWorkflow({
   // ─── Return ────────────────────────────────────────
 
   return {
-    status, connected, wsConnected, handleTestConnection,
+    status, connected, wsConnected, handleTestConnection, testingConnection,
     remoteFiles, remoteLoading, remoteError, refreshRemote,
     selectedPath, parsed, parsing, parseError, handleSelect, handleSelectFromDropdown,
     nodeViewMode, setNodeViewMode, exposedNodeIds, handleToggleExposed,

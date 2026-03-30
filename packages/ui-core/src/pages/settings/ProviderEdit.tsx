@@ -33,6 +33,7 @@ import {
   fetchRemoteModelsDirect,
 } from '../../api/providers';
 import { t } from '../../i18n/setup';
+import { inferModelCapabilities } from '../../utils/known-models';
 
 interface Props {
   providerId: string | null;
@@ -432,23 +433,27 @@ export default function ProviderEdit({ providerId, onSaved, onCancel }: Props) {
     const toAdd = fetchedModels.filter((m) => selectedFetchIds.has(m.id) && !existingIds.has(m.id));
 
     if (isNew) {
-      const newPending = toAdd.map((m) => ({
-        modelId: m.id,
-        displayName: m.name ?? m.id,
-        capabilities: [] as ModelCapability[],
-        fcMode: 'none' as FcMode,
-      }));
+      const newPending = toAdd.map((m) => {
+        const inferred = inferModelCapabilities(m.id);
+        return {
+          modelId: m.id,
+          displayName: m.name ?? m.id,
+          capabilities: inferred.capabilities,
+          fcMode: inferred.fcMode,
+        };
+      });
       setPendingModels((prev) => [...prev, ...newPending]);
     } else {
       if (!providerId) return;
       for (const m of toAdd) {
         try {
+          const inferred = inferModelCapabilities(m.id);
           const model = await addModel(providerId, {
             modelId: m.id,
             displayName: m.name ?? m.id,
             source: 'fetched',
-            capabilities: [],
-            fcMode: 'none',
+            capabilities: inferred.capabilities,
+            fcMode: inferred.fcMode,
           });
           setModels((prev) => [...prev, model]);
         } catch (err) {
@@ -919,6 +924,9 @@ export default function ProviderEdit({ providerId, onSaved, onCancel }: Props) {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 11, color: T.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.name ?? m.id}</div>
                         {m.name !== m.id && <div style={{ fontSize: 9, color: T.text3, fontFamily: 'monospace' }}>{m.id}</div>}
+                        <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: 2 }}>
+                          {inferModelCapabilities(m.id).capabilities.map((cap) => capBadge(cap))}
+                        </div>
                       </div>
                       {existsAlready && <span style={{ fontSize: 9, color: T.text3, marginLeft: 4 }}>{t('set.already_added')}</span>}
                     </div>

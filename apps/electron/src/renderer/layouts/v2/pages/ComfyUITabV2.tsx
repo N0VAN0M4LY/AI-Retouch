@@ -108,8 +108,13 @@ export default function ComfyUITabV2({ documentPath }: ComfyUITabV2Props) {
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: wf.wsConnected ? 'var(--green)' : '#999', display: 'inline-block' }} />
             {wf.wsConnected ? t('cui.ws_connected') : t('cui.ws_disconnected')}
           </div>
-          <div className="v2-pill" style={{ fontSize: 11 }} onClick={wf.handleTestConnection}>
-            <Icons.RefreshCw size={12} /> {t('cui.test')}
+          <div
+            className={`pill${wf.testingConnection ? '' : ' active'}`}
+            style={{ fontSize: 11, cursor: wf.testingConnection ? 'default' : 'pointer', opacity: wf.testingConnection ? 0.7 : 1 }}
+            onClick={wf.handleTestConnection}
+          >
+            {wf.testingConnection ? <Spinner size={11} /> : <Icons.RefreshCw size={12} />}
+            {wf.testingConnection ? t('set.testing') : t('cui.test')}
           </div>
         </div>
 
@@ -166,7 +171,7 @@ export default function ComfyUITabV2({ documentPath }: ComfyUITabV2Props) {
                     <>
                       <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text2)', flex: 1 }}>{t('cui.workflows')}</span>
                       <div
-                        className="v2-pill"
+                        className="pill"
                         style={{ fontSize: 10, padding: '2px 6px' }}
                         onClick={(e) => { e.stopPropagation(); wf.refreshRemote(); }}
                       >
@@ -399,7 +404,7 @@ export default function ComfyUITabV2({ documentPath }: ComfyUITabV2Props) {
             {wf.workflowReady && (
               <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                 <div
-                  className={`v2-pill ${wf.hasAssignedImages && !wf.executing && !wf.pollingResult ? 'active' : ''}`}
+                  className={`pill ${wf.hasAssignedImages && !wf.executing && !wf.pollingResult ? 'active' : ''}`}
                   style={{
                     flex: 1, justifyContent: 'center', fontWeight: 550, padding: '9px 0',
                     opacity: (!wf.hasAssignedImages || wf.executing || wf.pollingResult) ? 0.5 : 1,
@@ -509,7 +514,7 @@ export default function ComfyUITabV2({ documentPath }: ComfyUITabV2Props) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: 10, color: 'var(--text3)' }}>
                   <span>{wf.progressInfo.percentage}%</span>
                   {wf.currentPromptId && (
-                    <span className="v2-pill red" style={{ fontSize: 10, padding: '1px 6px', cursor: 'pointer' }} onClick={wf.handleCancelExecution}>
+                    <span className="pill red" style={{ fontSize: 10, padding: '1px 6px', cursor: 'pointer' }} onClick={wf.handleCancelExecution}>
                       {t('cui.cancel')}
                     </span>
                   )}
@@ -536,7 +541,11 @@ export default function ComfyUITabV2({ documentPath }: ComfyUITabV2Props) {
         <div className="v2-glass-card" style={{ padding: 14, flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
             <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)' }}>{t('v2.result_preview')}</span>
-            <div className="v2-pill" style={{ fontSize: 10 }} onClick={wf.handleRefreshOutputs}>
+            <div
+              className={`pill${wf.refreshingOutputs ? '' : ' active'}`}
+              style={{ fontSize: 10, cursor: wf.refreshingOutputs ? 'default' : 'pointer', opacity: wf.refreshingOutputs ? 0.7 : 1 }}
+              onClick={wf.refreshingOutputs ? undefined : wf.handleRefreshOutputs}
+            >
               {wf.refreshingOutputs ? <Spinner size={10} /> : <Icons.RefreshCw size={10} />}
               {t('cui.refresh_outputs')}
             </div>
@@ -583,7 +592,7 @@ export default function ComfyUITabV2({ documentPath }: ComfyUITabV2Props) {
                 return (
                   <div style={{ display: 'flex', gap: 6 }}>
                     <div
-                      className={`v2-pill ${isApplied ? 'green' : 'active'}`}
+                      className={`pill ${isApplied ? 'green' : 'active'}`}
                       style={{
                         flex: 1, justifyContent: 'center', fontSize: 11,
                         cursor: isApplied || isApplying ? 'default' : 'pointer',
@@ -600,7 +609,7 @@ export default function ComfyUITabV2({ documentPath }: ComfyUITabV2Props) {
                       )}
                     </div>
                     <div
-                      className="v2-pill"
+                      className="pill"
                       style={{ flex: 1, justifyContent: 'center', fontSize: 11, cursor: 'pointer' }}
                       onClick={() => wf.handleSaveToLibrary(sel)}
                     >
@@ -624,7 +633,7 @@ export default function ComfyUITabV2({ documentPath }: ComfyUITabV2Props) {
             <div style={{ marginTop: 8, fontSize: 11, color: 'var(--orange)', textAlign: 'center' }}>
               {wf.resultError}
               <span
-                className="v2-pill" style={{ fontSize: 10, marginLeft: 8, cursor: 'pointer' }}
+                className="pill" style={{ fontSize: 10, marginLeft: 8, cursor: 'pointer' }}
                 onClick={() => wf.setResultError(null)}
               >OK</span>
             </div>
@@ -755,7 +764,7 @@ function V2LoadImageNode({
         {!assignment ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 11, color: 'var(--text3)' }}>image</span>
-            <div className="v2-pill active" style={{ fontSize: 10, cursor: 'pointer' }} onClick={onAssign}>
+            <div className="pill active" style={{ fontSize: 10, cursor: 'pointer' }} onClick={onAssign}>
               <Icons.Image size={10} /> {t('cui.assign')}
             </div>
             <span style={{ fontSize: 10, color: 'var(--text3)' }}>({t('cui.not_assigned')})</span>
@@ -763,7 +772,7 @@ function V2LoadImageNode({
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 11, color: 'var(--text3)' }}>image</span>
-            <div className="v2-pill" style={{ fontSize: 10, cursor: 'pointer' }} onClick={onReplace}>
+            <div className="pill" style={{ fontSize: 10, cursor: 'pointer' }} onClick={onReplace}>
               <Icons.RefreshCw size={9} /> {t('cui.replace')}
             </div>
             {assignment.thumbnail && (
@@ -778,7 +787,7 @@ function V2LoadImageNode({
               <div style={{ fontSize: 10, color: 'var(--text2)' }}>{assignment.sourceName}</div>
               <div style={{ fontSize: 9, color: 'var(--text3)' }}>{assignment.width}x{assignment.height}</div>
             </div>
-            <div className="v2-pill red" style={{ fontSize: 10, cursor: 'pointer', padding: '3px 6px' }} onClick={onRemove}>
+            <div className="pill red" style={{ fontSize: 10, cursor: 'pointer', padding: '3px 6px' }} onClick={onRemove}>
               {t('cui.remove')}
             </div>
           </div>
@@ -944,7 +953,7 @@ function V2NumericParamRow({ param, value, onChange }: {
           }}
         />
         <div
-          className="v2-pill"
+          className="pill"
           style={{ fontSize: 9, padding: '3px 6px', cursor: 'pointer' }}
           onClick={() => onChange(Math.floor(Math.random() * 999999999))}
           title={t('cui.random_seed')}
@@ -1085,7 +1094,7 @@ function V2AllModeNodeCard({
               {!assignment ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 11, color: 'var(--text3)' }}>image</span>
-                  <div className="v2-pill active" style={{ fontSize: 10, cursor: 'pointer' }} onClick={onAssign}>
+                  <div className="pill active" style={{ fontSize: 10, cursor: 'pointer' }} onClick={onAssign}>
                     <Icons.Image size={10} /> {t('cui.assign')}
                   </div>
                   <span style={{ fontSize: 10, color: 'var(--text3)' }}>({t('cui.not_assigned')})</span>
@@ -1093,7 +1102,7 @@ function V2AllModeNodeCard({
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 11, color: 'var(--text3)' }}>image</span>
-                  <div className="v2-pill" style={{ fontSize: 10, cursor: 'pointer' }} onClick={onReplace}>
+                  <div className="pill" style={{ fontSize: 10, cursor: 'pointer' }} onClick={onReplace}>
                     <Icons.RefreshCw size={9} /> {t('cui.replace')}
                   </div>
                   {assignment.thumbnail && (
@@ -1104,7 +1113,7 @@ function V2AllModeNodeCard({
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 9, color: 'var(--text2)' }}>{assignment.sourceName}</div>
                   </div>
-                  <div className="v2-pill red" style={{ fontSize: 9, cursor: 'pointer', padding: '2px 5px' }} onClick={onRemove}>
+                  <div className="pill red" style={{ fontSize: 9, cursor: 'pointer', padding: '2px 5px' }} onClick={onRemove}>
                     {t('cui.remove')}
                   </div>
                 </div>
