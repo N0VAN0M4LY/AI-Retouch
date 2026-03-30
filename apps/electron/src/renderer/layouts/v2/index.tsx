@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlatformProvider, usePlatform } from '@ai-retouch/ui-core/platform';
 import ChatTab from '@ai-retouch/ui-core/pages/ChatTab';
-import ComfyUITab from '@ai-retouch/ui-core/pages/ComfyUITab';
+import ComfyUITabV2 from './pages/ComfyUITabV2';
 import LibraryTab from '@ai-retouch/ui-core/pages/LibraryTab';
 import BackendBanner from '@ai-retouch/ui-core/components/BackendBanner';
 import * as Icons from '@ai-retouch/ui-core/components/Icons';
@@ -142,7 +142,7 @@ function V2LayoutInner() {
             />
           </div>
           <div style={{ flex: 1, display: activeTab === 'comfyui' ? 'flex' : 'none', flexDirection: 'column', overflow: 'hidden' }}>
-            <ComfyUITab documentPath={documentPath} />
+            <ComfyUITabV2 documentPath={documentPath} />
           </div>
           <div style={{ flex: 1, display: activeTab === 'library' ? 'flex' : 'none', flexDirection: 'column', overflow: 'hidden' }}>
             <LibraryTab documentPath={documentPath} />

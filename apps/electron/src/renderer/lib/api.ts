@@ -111,20 +111,13 @@ export interface StreamHandle {
 
 // ─── Base URL ───────────────────────────────────────────
 
-let baseUrl = DEFAULT_BACKEND_URL;
-
-export function setBaseUrl(url: string) {
-  baseUrl = url.trim().replace(/\/$/, '');
-}
-
-export function getBaseUrl(): string {
-  return baseUrl;
-}
+import { getBaseUrl, setBaseUrl } from '@ai-retouch/ui-core/api/baseUrl';
+export { getBaseUrl, setBaseUrl };
 
 // ─── Core Request ───────────────────────────────────────
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const url = `${baseUrl}${path}`;
+  const url = `${getBaseUrl()}${path}`;
   let res: Response;
   try {
     res = await fetch(url, {
@@ -262,7 +255,7 @@ function createSSEStream(url: string, body: unknown, callbacks: StreamCallbacks)
 // ─── Health ─────────────────────────────────────────────
 
 export async function fetchBackendHealth(overrideUrl?: string): Promise<HealthResponse> {
-  const url = overrideUrl ? overrideUrl.replace(/\/$/, '') : baseUrl;
+  const url = overrideUrl ? overrideUrl.replace(/\/$/, '') : getBaseUrl();
   let res: Response;
   try {
     res = await fetch(`${url}${HEALTH_ENDPOINT}`, {
@@ -519,7 +512,7 @@ export function sendMessageStream(
   callbacks: StreamCallbacks,
 ): StreamHandle {
   const params = new URLSearchParams({ stream: 'true', docPath });
-  const url = `${baseUrl}/api/sessions/${encodeURIComponent(sessionId)}/messages?${params}`;
+  const url = `${getBaseUrl()}/api/sessions/${encodeURIComponent(sessionId)}/messages?${params}`;
   return createSSEStream(url, data, callbacks);
 }
 
@@ -531,7 +524,7 @@ export function regenerateStream(
   callbacks: StreamCallbacks,
 ): StreamHandle {
   const params = new URLSearchParams({ stream: 'true', docPath });
-  const url = `${baseUrl}/api/sessions/${encodeURIComponent(sessionId)}/messages/${encodeURIComponent(userMsgId)}/regenerate?${params}`;
+  const url = `${getBaseUrl()}/api/sessions/${encodeURIComponent(sessionId)}/messages/${encodeURIComponent(userMsgId)}/regenerate?${params}`;
   return createSSEStream(url, data, callbacks);
 }
 
@@ -539,12 +532,12 @@ export function regenerateStream(
 
 export function getContextPreviewUrl(messageId: string, docPath: string, sessionId: string): string {
   const params = new URLSearchParams({ docPath, sessionId });
-  return `${baseUrl}/api/messages/${encodeURIComponent(messageId)}/context-preview?${params}`;
+  return `${getBaseUrl()}/api/messages/${encodeURIComponent(messageId)}/context-preview?${params}`;
 }
 
 export function getContextImageUrl(messageId: string, filename: string, docPath: string, sessionId: string): string {
   const params = new URLSearchParams({ docPath, sessionId });
-  return `${baseUrl}/api/messages/${encodeURIComponent(messageId)}/context-images/${encodeURIComponent(filename)}?${params}`;
+  return `${getBaseUrl()}/api/messages/${encodeURIComponent(messageId)}/context-images/${encodeURIComponent(filename)}?${params}`;
 }
 
 // ─── Results ────────────────────────────────────────────
@@ -554,7 +547,7 @@ export function getResultPreviewUrl(resultId: string, docPath?: string, sessionI
   if (docPath) params.set('docPath', docPath);
   if (sessionId) params.set('sessionId', sessionId);
   const qs = params.toString();
-  return `${baseUrl}/api/results/${encodeURIComponent(resultId)}/preview${qs ? `?${qs}` : ''}`;
+  return `${getBaseUrl()}/api/results/${encodeURIComponent(resultId)}/preview${qs ? `?${qs}` : ''}`;
 }
 
 export function getResultFullUrl(resultId: string, docPath?: string, sessionId?: string): string {
@@ -562,7 +555,7 @@ export function getResultFullUrl(resultId: string, docPath?: string, sessionId?:
   if (docPath) params.set('docPath', docPath);
   if (sessionId) params.set('sessionId', sessionId);
   const qs = params.toString();
-  return `${baseUrl}/api/results/${encodeURIComponent(resultId)}/full${qs ? `?${qs}` : ''}`;
+  return `${getBaseUrl()}/api/results/${encodeURIComponent(resultId)}/full${qs ? `?${qs}` : ''}`;
 }
 
 export async function getResults(query?: {
@@ -687,7 +680,7 @@ export function getComfyUIViewUrl(filename: string, subfolder?: string, type?: s
   if (subfolder) params.set('subfolder', subfolder);
   if (type) params.set('type', type);
   const qs = params.toString();
-  return `${baseUrl}/api/comfyui/view/${encodeURIComponent(filename)}${qs ? `?${qs}` : ''}`;
+  return `${getBaseUrl()}/api/comfyui/view/${encodeURIComponent(filename)}${qs ? `?${qs}` : ''}`;
 }
 
 export async function listRemoteWorkflows(): Promise<RemoteWorkflowEntry[]> {
@@ -765,7 +758,7 @@ export async function pollWorkflowResult(promptId: string, timeoutMs?: number): 
 
 /** @deprecated Dead code — SSE endpoint replaced by WebSocket. Only consumer was useComfyUISSE (removed). */
 export function subscribeComfyUIEvents(callbacks: ComfyUISSECallbacks): { abort: () => void } {
-  const es = new EventSource(`${baseUrl}/api/comfyui/events`);
+  const es = new EventSource(`${getBaseUrl()}/api/comfyui/events`);
 
   es.addEventListener('progress', (e) => {
     try { callbacks.onProgress?.(JSON.parse(e.data)); } catch { /* ignore */ }
