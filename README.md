@@ -162,7 +162,7 @@ AI Retouch 由两部分组成，**都需要安装**才能正常工作：
 
 ### 从 Release 安装
 
-前往 [Releases](https://github.com/<your-org>/ai-retouch/releases) 下载最新的安装包：
+前往 [Releases](https://github.com/N0VAN0M4LY/AI-Retouch/releases) 下载最新的安装包：
 - **Windows**: `AI-Retouch-x.x.x-Setup.exe`
 - **macOS**: 计划中
 
@@ -253,4 +253,4 @@ pnpm pack:mac
 
 本项目基于 [GNU Affero General Public License v3.0 (AGPL-3.0)](https://www.gnu.org/licenses/agpl-3.0.html) 许可证开源。
 
-Copyright © 2025 AI Retouch Contributors
+Copyright © 2026 AI Retouch Contributors
