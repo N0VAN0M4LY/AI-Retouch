@@ -1,5 +1,6 @@
 import { build } from 'esbuild';
 import { mkdir, readFile, rm, writeFile, copyFile, readdir, stat } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -9,6 +10,11 @@ const rootDir = path.resolve(__dirname, '..');
 const distDir = path.join(rootDir, 'dist');
 const sourceHtmlPath = path.join(rootDir, 'index.html');
 const manifestPath = path.join(rootDir, 'public', 'manifest.json');
+
+// Resolve React from *this* package (plugin) to ensure a single copy is bundled.
+const require = createRequire(path.join(rootDir, 'package.json'));
+const reactDir = path.dirname(require.resolve('react/package.json'));
+const reactDomDir = path.dirname(require.resolve('react-dom/package.json'));
 
 await rm(distDir, { recursive: true, force: true });
 await mkdir(distDir, { recursive: true });
@@ -24,6 +30,12 @@ await build({
   jsx: 'automatic',
   loader: {
     '.css': 'css',
+  },
+  alias: {
+    'react': reactDir,
+    'react-dom': reactDomDir,
+    'react/jsx-runtime': path.join(reactDir, 'jsx-runtime'),
+    'react/jsx-dev-runtime': path.join(reactDir, 'jsx-dev-runtime'),
   },
   define: {
     'process.env.NODE_ENV': '"production"',
